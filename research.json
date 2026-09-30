@@ -56,8 +56,9 @@
     "list_contract_finding": "list requires the full frontend filter set (p_type/time_order/search_txt/create_type/plugin/status); page/page_size alone returns HTTP 422 and page_size=1 also returns 422 (minimum 2). Now encoded as contract defaults.",
     "list_rspd_count_note": "data.project_list[].rspd_count lagged (0) while /edit/ajax/get_rspd_count/ reported 9; use the count endpoint for response totals",
     "authenticated_write_tested": false,
-    "export_pre_request_attempt": "2026-10-01 00:37-00:52, user-authorized, on the same survey: the frontend param set is accepted only when 'version' (from account package_status) is OMITTED; including it returns 10003 参数错误, and data_type other than 'original' also returns 10003. After the accepted call the endpoint returned 14025 数据正在下载请稍后再试 for every param combination, including a single probe after a 2-minute silence; downloads.list stayed total=0 across a dozen checks over ~20 minutes, so no task, no file, and no row comparison were obtained. Export closure NOT verified.",
-    "real_answers_downloaded": false,
+    "export_pre_request_attempt": "2026-10-01 00:37-01:00, user-authorized, on the same survey. CLI trigger side NOT verified: the frontend param set is accepted only when 'version' (from account package_status) is OMITTED; including it returns 10003 参数错误, and data_type other than 'original' also returns 10003. After the accepted call the endpoint returned 14025 数据正在下载请稍后再试 for every param combination, including a single probe after a 2-minute silence, and downloads.list stayed total=0 across a dozen checks over ~20 minutes. The browser 导出数据 dialog (原始数据/文本数据/一题一列/Excel) produced a ready task in ~50s, so the two paths use different parameter sets and the dialog's real payload is still unverified. During task generation downloads.list returned 10003 three times, then recovered.",
+    "real_answers_downloaded": true,
+    "real_download_evidence": "task status=1 with download_url -> thuwj.py download wrote 7859 bytes (0600, sha256 b6fcd3827828040ff3b890483bc764ff83c2029db5908e920d38231b474e0e3d); openpyxl read back 1 sheet, 25 columns, 1 header row and 9 data rows with 9 unique 答题序号, matching project.count rspd_count=9",
     "question_crud_verified": false,
     "production_survey_modified_by_cli_research": false
   },

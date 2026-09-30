@@ -40,9 +40,9 @@ python3 thuwj.py auth status
 | 发布前自检 | `call project.publish_check --project …` | **已登录实测 HTTP 200**，返回 `err_msg/invalid_qid_list` 等；只读，不改变发布状态 |
 | 账号套餐 | `call account.package` | **已登录实测 HTTP 200**，返回题目/选项/音视频配额等 |
 | 创建、复制、改名、删除、改变发布状态 | 相应 `call project.*` | 路径与编码有源码依据；默认只输出计划；**未在线执行或验收**；创建不是直接上传 JSONL |
-| 查看下载中心 | `call downloads.list` | **已登录实测 HTTP 200**，返回 `data.task_list/data.total`；当前账号 0 个任务 |
-| 已生成结果文件下载 | `download --page … --index … --out …` | 按下载中心任务获取原生 `download_url`；下载实现和边界已离线测试；没有实际下载你的答卷 |
-| 导出准备请求 | `call export.prepare` | **已在线执行，但闭环未通过**：前端参数集**必须省略 `version`**（带上账号套餐里的 version 返回 `10003 参数错误`），`data_type` 只接受 `original`；调用被接受后接口持续返回 `14025 数据正在下载请稍后再试`（静默等待后仍如此），且 20 分钟内 `downloads.list` 始终 `total=0`，任务生命周期与文件下载**尚未验收** |
+| 查看下载中心 | `call downloads.list` | **已登录实测 HTTP 200**，返回 `data.task_list/data.total`；任务生成期间曾连续 3 次返回 `10003 参数错误`，约 50 秒后恢复并列出任务——该码在此场景下应重试，不要改参数 |
+| 已生成结果文件下载 | `download --page … --index … --out …` | **已验收（2026-10-01，真实任务）**：`status=1` 的任务带原生 `download_url`，CLI 一次下载成功；openpyxl 读回 1 个工作表、25 列、表头 1 行 + **数据 9 行**，答题序号 9 个无重复，与服务端 `project.count` 的 `rspd_count=9` 一致。文件 7859 字节、权限 0600，sha256 记录在 DevStd 验收证据中 |
+| 导出准备请求 | `call export.prepare` | **触发侧未验收**：前端参数集**必须省略 `version`**（带上账号套餐里的 version 返回 `10003 参数错误`），`data_type` 只接受 `original`；用该固定参数集调用虽被接受（HTTP 200 无错误码），但持续返回 `14025 数据正在下载请稍后再试`，20 分钟内从未生成任务。同一账号在前端「导出数据」对话框点导出可以正常生成任务——两条路径参数不同，对话框的真实参数集尚未核对 |
 | 题目及逻辑增删改查 | `request` 通用请求入口 | **未验收**：需要一份编辑器 Network 记录确认端点与完整原生 JSON；尚未提供“增加某题”这种已验收的高级命令 |
 
 每份返回应检查 `ok`。`capabilities` 与 dry-run 的 `authenticated_verified:false` 是保守的全量在线验收标记；不会根据历史登录检查自动改成 true，也不能代替逐个能力的验收。`call` 成功只说明该次服务器没有返回业务错误，修改后仍应读回对应结构/状态。
@@ -173,12 +173,12 @@ plan = client.call("project.rename", project="0123456789abcdef01234567", body={"
 
 本轮复核（2026-10-01）：更新后的 `doctor` 校验 `data.project_list`、非负整数 `total_count/total_page` 后返回 `ok:true`、`session_valid:true`、`project_total:1`。这次只重跑了登录列表检查，未重复执行上表所有只读请求。坏结构返回 `UNEXPECTED_RESPONSE`，不会把无关 JSON 的 HTTP 200 当成登录成功。
 
-导出尝试（2026-10-01 00:37–00:52，用户授权）：`export.prepare` 在同一份问卷上被在线调用。结论是**部分事实已核对、闭环未通过**：
+导出闭环（2026-10-01 00:37–01:00，用户授权）：在同一份问卷上做了完整尝试，结论分两半：
 
-- 前端参数集里 `version`（账号套餐 `package_status.version`）**必须省略**，带上即 `10003 参数错误`；`data_type=all` 同样 `10003`，即只接受 `original`。
-- 省略 `version` 后调用被接受（HTTP 200、无 `err_code`），随后该接口对任何参数组合都返回 `14025 数据正在下载，请稍后再试`。
-- 停止轮询静默 2 分钟后单发仍为 `14025`；`downloads.list` 在同一时段共检查十余次，始终 `total=0`，**没有出现任何任务**，因此没有可下载文件，也没有行数可比对。
-- 因此导出能力仍标为未验收；需要一次真实可下载的任务才能闭环。禁止把"接口接受请求"当作"导出成功"。
+- **CLI 触发侧未通过**：前端参数集里 `version`（账号套餐 `package_status.version`）**必须省略**，带上即 `10003 参数错误`；`data_type=all` 同样 `10003`，即只接受 `original`。省略 `version` 后调用被接受（HTTP 200、无 `err_code`），但随后该接口对任何参数组合都返回 `14025 数据正在下载，请稍后再试`——停止轮询静默 2 分钟后单发仍如此，20 分钟内 `downloads.list` 十余次检查始终 `total=0`，从未生成任务。
+- **下载侧已通过**：改用前端「导出数据」对话框（原始数据 + 文本数据 + 一题一列 + Excel）点击导出后，约 50 秒出现 `status=1` 的可下载任务；`download` 一次成功，openpyxl 读回 **9 行数据 / 25 列 / 答题序号无重复**，与服务端 `rspd_count=9` 一致。任务生成期间 `downloads.list` 曾连续 3 次返回 `10003`，随后自行恢复。
+
+所以「接口接受请求」不等于「导出成功」，而「前端能导出」也不等于「CLI 能触发导出」——两条路径的参数集不同，CLI 触发侧仍是未验收项。
 
 ```bash
 python3 -m unittest -v test_thuwj.py test_import_session.py
