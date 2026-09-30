@@ -1,0 +1,14 @@
+# 会话凭据、导出结果与本地缓存：任何情况下都不要提交
+.state/
+exports/
+*.har
+session*.json
+
+# 本机与工具产物
+__pycache__/
+*.pyc
+.env
+*.pem
+*.key
+*.xlsx
+*.csv

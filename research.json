@@ -1,0 +1,126 @@
+{
+  "date": "2026-09-30",
+  "timezone": "Asia/Shanghai",
+  "origin": "https://wenjuan.tsinghua.edu.cn",
+  "method": "anonymous public HTML/JavaScript reads; static contract analysis; no browser credentials accessed",
+  "sources": [
+    {
+      "role": "runtime",
+      "url": "https://wenjuan.tsinghua.edu.cn/_nuxt_homesite/10375cc.js",
+      "bytes": 11585,
+      "sha256": "de3469671d4539db9a2f331cd7eed9b3ddab577aa7c4a0840703b5093f84fdac"
+    },
+    {
+      "role": "native_contracts_and_signer",
+      "url": "https://wenjuan.tsinghua.edu.cn/_nuxt_homesite/6c92019.js",
+      "bytes": 203031,
+      "sha256": "f4c6a0b75ba013d79bbee822490d1627aa34b78660a5242898997894d83c09e5"
+    },
+    {
+      "role": "project_list",
+      "url": "https://wenjuan.tsinghua.edu.cn/_nuxt_homesite/d7fd716.js",
+      "bytes": 20151,
+      "sha256": "db5624189c103a2d47cf8db7cf073bfda2e31f478c0db596358373ad3d306e9f"
+    },
+    {
+      "role": "download_center",
+      "url": "https://wenjuan.tsinghua.edu.cn/_nuxt_homesite/568b838.js",
+      "bytes": 4511,
+      "sha256": "750cadd431847ce5ab37516474f0dad9788df186292c4dd25ad43a4489808734"
+    },
+    {
+      "role": "official_openapi_document",
+      "url": "https://open.wenjuan.com/document/",
+      "bytes": 45308,
+      "sha256": "c0312e85faff968ef6d5b954fd4410818da9eb48b88cfd456e6f6cade16a8b3b"
+    }
+  ],
+  "signing": {
+    "params": "module 148.v + module 269: timestamp, appkey, web_site, sorted values, MD5",
+    "header": "module 148.y: compact JSON body + sorted query values + public frontend seed, MD5",
+    "public_constants": "not included in this research report; bootstrap caches parsed profiles privately; not account credentials"
+  },
+  "verification": {
+    "offline_tests_passed": 41,
+    "automatic_public_bootstrap": "passed; source module SHA256 matches downloaded bundle",
+    "anonymous_doctor": {
+      "expected": "authentication boundary",
+      "actual_error_code": "AUTH_REQUIRED",
+      "native_business_error_code": 10001,
+      "exit_code": 2
+    },
+    "session_imported": true,
+    "session_import_note": "user-provided DevTools 'copy as cURL' imported locally 2026-09-30; script keeps last duplicate sessionid; credentials never printed",
+    "authenticated_read_tested": true,
+    "authenticated_read_scope": "project.list, project.settings, project.count, project.publish_check, account.package, downloads.list (all HTTP 200, ok:true); doctor ok:true with project_total=1",
+    "list_contract_finding": "list requires the full frontend filter set (p_type/time_order/search_txt/create_type/plugin/status); page/page_size alone returns HTTP 422 and page_size=1 also returns 422 (minimum 2). Now encoded as contract defaults.",
+    "list_rspd_count_note": "data.project_list[].rspd_count lagged (0) while /edit/ajax/get_rspd_count/ reported 9; use the count endpoint for response totals",
+    "authenticated_write_tested": false,
+    "real_answers_downloaded": false,
+    "question_crud_verified": false,
+    "production_survey_modified_by_cli_research": false
+  },
+  "blocked_access": {
+    "action": "reading current authenticated page via CUA",
+    "decision": "automatic review denied",
+    "reason": "requires dedicated Browser channel; channel unavailable in current tool environment",
+    "continuation": "materially safer anonymous public-source analysis and local implementation; no attempt to harvest browser session"
+  },
+  "remaining": [
+    "authenticated response schema verification for remaining fields (pagination edge cases, folders)",
+    "editor request capture for full question and logic contracts",
+    "CRUD validation on a separate draft, with readback",
+    "native export request/task lifecycle/file row-count verification"
+  ],
+  "official_options": {
+    "mcp": "https://www.wenjuan.com/mcp/",
+    "openapi": "https://open.wenjuan.com/document/",
+    "tsinghua_deployment_support": "not confirmed; public Wenjuan MCP account is not assumed to be the Tsinghua account"
+  },
+  "iterations": [
+    {
+      "date": "2026-10-01",
+      "scope": "cURL origin validation, complete shell-quoted Cookie parsing, standalone pipe-containing sessionid, doctor response schema; DevStd onboarding",
+      "baseline": {
+        "existing_offline_tests_passed": 27,
+        "reviewed_defects": 4,
+        "new_regressions_failed_before_fix": true
+      },
+      "offline": {
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "-v",
+          "test_thuwj.py",
+          "test_import_session.py"
+        ],
+        "tests_passed": 41
+      },
+      "authenticated_doctor": {
+        "ok": true,
+        "session_valid": true,
+        "project_total": 1,
+        "response_keys": [
+          "status_code",
+          "data"
+        ],
+        "scope": "single read-only project.list query; no answer data collected"
+      },
+      "development_workflow": {
+        "tool": "devstd",
+        "existing_function_nodes": 4,
+        "planned_function_nodes": 2,
+        "behavior_rules": 6,
+        "checks_timeout_seconds": 120,
+        "changes_enabled": false
+      },
+      "limitations": [
+        "no online writes",
+        "no real answer exports or downloads",
+        "question and logic CRUD remain planned",
+        "CLI capabilities authenticated_verified is a conservative aggregate flag, not the current session state"
+      ]
+    }
+  ]
+}
