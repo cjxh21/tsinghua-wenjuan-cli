@@ -191,7 +191,7 @@ python3 thuwj.py doctor --anonymous
 - `.state/session.json`（登录会话）与 `.state/signer.json`（公开签名缓存）都在 `.gitignore` 中；`exports/`、`*.har`、`session*.json` 同样被排除。
 - `check_no_secrets.py` 扫描全部跟踪文件，发现 `sessionid=`、Cookie 请求头、XSRF 令牌等疑似凭据即退出 1；它**只报告文件与行号，不打印命中的值**。
 - `.githooks/pre-commit` 与 `pre-push` 调用同一脚本。克隆后启用一次：`git config core.hooksPath .githooks`（没有启用钩子时，`python3 check_no_secrets.py` 仍可手动或由 CI 执行）。
-- `.github/workflows/ci.yml` 在每次 push / PR 上同时运行凭据自检与离线测试。
+- GitHub 端如需再上一层：在 `.github/workflows/` 放一个跑同样两条命令的 workflow，并开启仓库的 push protection（公开仓库默认开启 secret scanning）。提交 workflow 前需要 CLI 具备 `workflow` 权限：`gh auth refresh -s workflow`。
 - 测试只使用合成凭据和 `FakeTransport`，不依赖真实登录态；文档示例中的问卷 ID 是占位符。
 
 需要在另一台自己的机器上继续时，**不要通过 git 传递会话**，在那台机器上重新走一次 [登录只在本机接入](#登录只在本机接入) 即可。若凭据曾被粘贴到聊天、群或任何云端位置，应视为已泄露，用完到站点退出登录使其失效。
