@@ -56,6 +56,7 @@
     "list_contract_finding": "list requires the full frontend filter set (p_type/time_order/search_txt/create_type/plugin/status); page/page_size alone returns HTTP 422 and page_size=1 also returns 422 (minimum 2). Now encoded as contract defaults.",
     "list_rspd_count_note": "data.project_list[].rspd_count lagged (0) while /edit/ajax/get_rspd_count/ reported 9; use the count endpoint for response totals",
     "authenticated_write_tested": false,
+    "export_pre_request_attempt": "2026-10-01 00:37-00:52, user-authorized, on the same survey: the frontend param set is accepted only when 'version' (from account package_status) is OMITTED; including it returns 10003 参数错误, and data_type other than 'original' also returns 10003. After the accepted call the endpoint returned 14025 数据正在下载请稍后再试 for every param combination, including a single probe after a 2-minute silence; downloads.list stayed total=0 across a dozen checks over ~20 minutes, so no task, no file, and no row comparison were obtained. Export closure NOT verified.",
     "real_answers_downloaded": false,
     "question_crud_verified": false,
     "production_survey_modified_by_cli_research": false
