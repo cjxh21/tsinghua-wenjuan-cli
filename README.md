@@ -41,7 +41,7 @@ python3 thuwj.py auth status
 | 账号套餐 | `call account.package` | **已登录实测 HTTP 200**，返回题目/选项/音视频配额等 |
 | 创建、复制、改名、删除、改变发布状态 | 相应 `call project.*` | 路径与编码有源码依据；默认只输出计划；**未在线执行或验收**；创建不是直接上传 JSONL |
 | 查看下载中心 | `call downloads.list` | **已登录实测 HTTP 200**，返回 `data.task_list/data.total`；任务生成期间曾连续 3 次返回 `10003 参数错误`，约 50 秒后恢复并列出任务——该码在此场景下应重试，不要改参数 |
-| 已生成结果文件下载 | `download --page … --index … --out …` | **已验收（2026-10-01，真实任务）**：`status=1` 的任务带原生 `download_url`，CLI 一次下载成功；openpyxl 读回 1 个工作表、25 列、表头 1 行 + **数据 9 行**，答题序号 9 个无重复，与服务端 `project.count` 的 `rspd_count=9` 一致。文件 7859 字节、权限 0600，sha256 记录在 DevStd 验收证据中 |
+| 已生成结果文件下载 | `download --page … --index … --out …` | **已验收（2026-10-01，真实任务）**：`status=1` 的任务带原生 `download_url`，CLI 一次下载成功；openpyxl 读回 1 个工作表、25 列、表头 1 行 + **数据 9 行**，答题序号 9 个无重复，与服务端 `project.count` 的 `rspd_count=9` 一致。文件 7859 字节、权限 0600，sha256 `b6fcd3827828040ff3b890483bc764ff83c2029db5908e920d38231b474e0e3d` |
 | 导出准备请求 | `call export.prepare` | **触发侧未验收**：前端参数集**必须省略 `version`**（带上账号套餐里的 version 返回 `10003 参数错误`），`data_type` 只接受 `original`；用该固定参数集调用虽被接受（HTTP 200 无错误码），但持续返回 `14025 数据正在下载请稍后再试`，20 分钟内从未生成任务。同一账号在前端「导出数据」对话框点导出可以正常生成任务——两条路径参数不同，对话框的真实参数集尚未核对 |
 | 题目及逻辑增删改查 | `request` 通用请求入口 | **未验收**：需要一份编辑器 Network 记录确认端点与完整原生 JSON；尚未提供“增加某题”这种已验收的高级命令 |
 
@@ -202,18 +202,3 @@ python3 thuwj.py doctor --anonymous
 - 测试只使用合成凭据和 `FakeTransport`，不依赖真实登录态；文档示例中的问卷 ID 是占位符。
 
 需要在另一台自己的机器上继续时，**不要通过 git 传递会话**，在那台机器上重新走一次 [登录只在本机接入](#登录只在本机接入) 即可。若凭据曾被粘贴到聊天、群或任何云端位置，应视为已泄露，用完到站点退出登录使其失效。
-
-## DevStd 开发入口
-
-本目录已独立登记为 DevStd 项目“清华问卷 CLI”。功能图包含四个已有职责：本地登录凭据导入、登录状态只读检查、原生接口调用、已生成结果文件下载；每个功能有输入输出、真实文件绑定、流程和验收规则。题目与关联逻辑编辑、完整答卷导出闭环保留为两个待实现节点。
-
-```bash
-cd /path/to/tsinghua-wenjuan-cli   # 本仓库根目录
-devstd context
-devstd coverage
-devstd                         # 打开当前项目工作台
-devstd context --node <本轮功能ID>
-devstd verify --node <本轮功能ID>
-```
-
-后续 Agent 从 [AGENTS.md](AGENTS.md) 进入开发流程；功能 ID 从当前 context 取得，保持已有节点身份。项目登记的验证命令是 `python3 -m unittest -v test_thuwj.py test_import_session.py`，超时 120 秒，只运行离线检查。线上写入、真实答卷文件下载及行数比对分别记录人工证据，不由离线 `verification.state=passed` 自动证明。当前未启用 DevStd 文件变更归档；开发意图、规则版本、检查结果和报告记录在 DevStd 事件中。

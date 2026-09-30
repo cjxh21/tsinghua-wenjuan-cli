@@ -82,7 +82,7 @@
   "iterations": [
     {
       "date": "2026-10-01",
-      "scope": "cURL origin validation, complete shell-quoted Cookie parsing, standalone pipe-containing sessionid, doctor response schema; DevStd onboarding",
+      "scope": "cURL origin validation, complete shell-quoted Cookie parsing, standalone pipe-containing sessionid, doctor response schema; onboarding of the existing implementation",
       "baseline": {
         "existing_offline_tests_passed": 27,
         "reviewed_defects": 4,
@@ -108,14 +108,6 @@
           "data"
         ],
         "scope": "single read-only project.list query; no answer data collected"
-      },
-      "development_workflow": {
-        "tool": "devstd",
-        "existing_function_nodes": 4,
-        "planned_function_nodes": 2,
-        "behavior_rules": 6,
-        "checks_timeout_seconds": 120,
-        "changes_enabled": false
       },
       "limitations": [
         "no online writes",

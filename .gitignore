@@ -12,3 +12,4 @@ __pycache__/
 *.key
 *.xlsx
 *.csv
+AGENTS.md
