@@ -203,6 +203,22 @@ class ClientTests(unittest.TestCase):
         self.assertFalse(result["session_valid"])
         self.assertNotIn("Cookie", transport.calls[0][2])
 
+    def test_export_create_previews_then_sends_native_numeric_payload(self):
+        client, transport = self.client([Response(200, {}, b'{"status":200,"status_code":1,"data":{}}')])
+        body = {"project_id": "a" * 24, "version": 1, "filter_count": 10}
+        self.assertTrue(client.call("export.create", body=body)["dry_run"])
+        self.assertEqual(transport.calls, [])
+        client.call("export.create", body=body, apply=True)
+        method, url, headers, payload = transport.calls[0]
+        self.assertEqual(method, "POST")
+        self.assertEqual(urlsplit(url).path, "/report/api/download/")
+        data = json.loads(payload)
+        self.assertEqual(data["file_type"], [1])
+        self.assertEqual(data["sub_type"], 3)
+        self.assertEqual(data["data_type"], 1)
+        self.assertEqual(data["version"], 1)
+        self.assertTrue(data["is_merge"])
+
     def test_har_import_only_uses_target_origin_and_private_permissions(self):
         har = self.work / "capture.har"
         har.write_text(json.dumps({"log": {"entries": [

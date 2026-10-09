@@ -116,5 +116,32 @@
         "CLI capabilities authenticated_verified is a conservative aggregate flag, not the current session state"
       ]
     }
-  ]
+  ],
+  "export_task_verification_20261010": {
+    "source": "official report frontend 35979911 report.0e34aa3c.js + common-async.190e38fc.js, export dialog checkForm/createDownloadTask",
+    "cause": "GET pre_request warms a cache; POST /report/api/download/ creates the download-center task",
+    "report_base": "GET /report/api/base/{project}: data.version is questionnaire version",
+    "payload": {
+      "download_type": 1,
+      "sub_type": 3,
+      "source": 4,
+      "version": 1,
+      "client_type": 1,
+      "file_type": [
+        1
+      ],
+      "data_type": 1,
+      "is_merge": true,
+      "filter_count": 10
+    },
+    "result": {
+      "create_http": 200,
+      "create_status_code": 1,
+      "task_status": 1,
+      "download_bytes": 8003,
+      "xlsx_answer_rows": 10,
+      "answer_count_matched": true
+    },
+    "boundary": "Manual CLI steps create/list/download verified. No automatic polling command; no question-edit or publish verification. No credentials, signed download URLs, or response contents stored here."
+  }
 }
